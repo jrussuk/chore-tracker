@@ -502,8 +502,8 @@
 
     <script>
         // CONFIGURATION - Replace this with your Google Apps Script Web App URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyd8szycSq2kUjWRwmZXsK7EedSBz153UJdXITG7ias86UQ5Gp92p238xfNN3ty6XWF1Q/exec';
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1_v1ww31WTl4K7Mh-kZLyMNgXnMcNT4Umsr9gBh-UNUI/edit?gid=417621675#gid=417621675';
+        const SCRIPT_URL = 'YOUR_SCRIPT_URL_HERE';
+        const SHEET_URL = 'YOUR_SHEET_URL_HERE';
 
         let currentData = null;
 
@@ -613,18 +613,22 @@
             button.textContent = 'Logging...';
 
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'complete',
-                        child: child,
-                        choreId: choreId,
-                        choreName: choreName
-                    })
+                // Use URL parameters to avoid CORS preflight
+                const params = new URLSearchParams({
+                    action: 'complete',
+                    child: child,
+                    choreId: choreId,
+                    choreName: choreName
                 });
 
-                if (!response.ok) throw new Error('Failed to log chore');
+                const response = await fetch(SCRIPT_URL + '?' + params.toString(), {
+                    method: 'POST',
+                    redirect: 'follow'
+                });
+
+                const result = await response.json();
+                
+                if (!result.success) throw new Error(result.error || 'Failed to log chore');
 
                 showSuccess('Chore logged! Great work! 🎉');
                 setTimeout(() => loadDashboard(child), 1000);
