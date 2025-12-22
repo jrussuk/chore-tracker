@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chore Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .user-select {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-button {
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            min-height: 70px;
+        }
+
+        .user-button:active {
+            transform: scale(0.95);
+        }
+
+        .ella-button {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+        }
+
+        .ella-button:hover {
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+        }
+
+        .hamish-button {
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+        }
+
+        .hamish-button:hover {
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.4);
+        }
+
+        .parent-button {
+            background: linear-gradient(135deg, #95E1D3 0%, #38Ada9 100%);
+        }
+
+        .parent-button:hover {
+            box-shadow: 0 5px 20px rgba(149, 225, 211, 0.4);
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-header.ella {
+            background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
+        }
+
+        .dashboard-header.hamish {
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+        }
+
+        .dashboard-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-header .date {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .chore-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .chore-card.completed {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .chore-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .chore-info {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .complete-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .complete-button:hover {
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .complete-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .complete-button.done {
+            background: #4caf50;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .parent-summary {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .parent-summary h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar {
+            margin-bottom: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .progress-track {
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .progress-fill.ella {
+            background: linear-gradient(90deg, #FF6B9D 0%, #C44569 100%);
+        }
+
+        .progress-fill.hamish {
+            background: linear-gradient(90deg, #4A90E2 0%, #357ABD 100%);
+        }
+
+        .today-log {
+            margin-top: 20px;
+        }
+
+        .log-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .log-item .check {
+            color: #4caf50;
+            font-size: 20px;
+        }
+
+        .log-item .warning {
+            color: #ff9800;
+            font-size: 20px;
+        }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-chore {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .log-child {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .link-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            color: #667eea;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .link-button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4caf50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Selection Screen -->
+        <div id="selectionScreen">
+            <div class="header">
+                <h1>🏠 Chore Tracker</h1>
+                <p class="subtitle">Who are you?</p>
+            </div>
+            <div class="user-select">
+                <button class="user-button ella-button" onclick="selectUser('Ella')">
+                    Ella
+                </button>
+                <button class="user-button hamish-button" onclick="selectUser('Hamish')">
+                    Hamish
+                </button>
+                <button class="user-button parent-button" onclick="selectUser('Parent')">
+                    Parent View
+                </button>
+            </div>
+        </div>
+
+        <!-- Ella Dashboard -->
+        <div id="ellaDashboard" class="dashboard">
+            <div class="dashboard-header ella">
+                <button class="back-button" onclick="goBack()">← Back</button>
+                <h2>👋 Hi Ella</h2>
+                <p class="date" id="ellaDate"></p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Your Chores Today</h3>
+                <div id="ellaChores"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Shared Chores</h3>
+                <div id="ellaSharedChores"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">This Week</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="ellaWeekCount">-</div>
+                        <div class="stat-label">You</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="hamishWeekCountFromElla">-</div>
+                        <div class="stat-label">Hamish</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hamish Dashboard -->
+        <div id="hamishDashboard" class="dashboard">
+            <div class="dashboard-header hamish">
+                <button class="back-button" onclick="goBack()">← Back</button>
+                <h2>👋 Hi Hamish</h2>
+                <p class="date" id="hamishDate"></p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Your Chores Today</h3>
+                <div id="hamishChores"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Shared Chores</h3>
+                <div id="hamishSharedChores"></div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">This Week</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="hamishWeekCount">-</div>
+                        <div class="stat-label">You</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="ellaWeekCountFromHamish">-</div>
+                        <div class="stat-label">Ella</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parent Dashboard -->
+        <div id="parentDashboard" class="dashboard">
+            <div class="dashboard-header">
+                <button class="back-button" onclick="goBack()">← Back</button>
+                <h2>📊 Parent Dashboard</h2>
+                <p class="date" id="parentDate"></p>
+            </div>
+
+            <div class="parent-summary">
+                <h3>This Week</h3>
+                <div class="progress-bar">
+                    <div class="progress-label">
+                        <span>Ella</span>
+                        <span id="ellaWeekTotal">0</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill ella" id="ellaProgressBar">0</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-label">
+                        <span>Hamish</span>
+                        <span id="hamishWeekTotal">0</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill hamish" id="hamishProgressBar">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Today's Activity</h3>
+                <div id="todayLog"></div>
+            </div>
+
+            <a href="#" id="sheetLink" class="link-button" target="_blank">
+                📊 Open Google Sheet
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION - Replace this with your Google Apps Script Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzn9Qvv2KUe7yhnQeYxOjy1JYZ5sOrCTYwhomzILPpFZG-yZitysk_zQgRa0-V3-8ja/exec
+';
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1_v1ww31WTl4K7Mh-kZLyMNgXnMcNT4Umsr9gBh-UNUI/edit?gid=417621675#gid=417621675
+';
+
+        let currentData = null;
+
+        // Format date nicely
+        function formatDate() {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const now = new Date();
+            const dayName = days[now.getDay()];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const suffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
+            return `${dayName}, ${day}${suffix} ${month}`;
+        }
+
+        // Select user and load their dashboard
+        async function selectUser(user) {
+            document.getElementById('selectionScreen').style.display = 'none';
+            
+            if (user === 'Ella') {
+                document.getElementById('ellaDashboard').classList.add('active');
+                document.getElementById('ellaDate').textContent = formatDate();
+                await loadDashboard('Ella');
+            } else if (user === 'Hamish') {
+                document.getElementById('hamishDashboard').classList.add('active');
+                document.getElementById('hamishDate').textContent = formatDate();
+                await loadDashboard('Hamish');
+            } else {
+                document.getElementById('parentDashboard').classList.add('active');
+                document.getElementById('parentDate').textContent = formatDate();
+                document.getElementById('sheetLink').href = SHEET_URL;
+                await loadParentDashboard();
+            }
+        }
+
+        // Go back to selection screen
+        function goBack() {
+            document.querySelectorAll('.dashboard').forEach(d => d.classList.remove('active'));
+            document.getElementById('selectionScreen').style.display = 'block';
+        }
+
+        // Load data from Google Apps Script
+        async function loadData() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                if (!response.ok) throw new Error('Failed to load data');
+                currentData = await response.json();
+                return currentData;
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError('Could not load chore data. Please check your connection.');
+                return null;
+            }
+        }
+
+        // Load child dashboard
+        async function loadDashboard(child) {
+            const data = await loadData();
+            if (!data) return;
+
+            const prefix = child.toLowerCase();
+            const otherChild = child === 'Ella' ? 'Hamish' : 'Ella';
+
+            // Update week counts
+            document.getElementById(`${prefix}WeekCount`).textContent = data.weekCounts[child] || 0;
+            document.getElementById(`${otherChild.toLowerCase()}WeekCountFrom${child}`).textContent = data.weekCounts[otherChild] || 0;
+
+            // Render assigned chores
+            const assignedChores = data.todayChores.filter(c => c.assignedTo === child);
+            renderChores(assignedChores, `${prefix}Chores`, child);
+
+            // Render shared chores
+            const sharedChores = data.todayChores.filter(c => c.assignedTo === 'either');
+            renderChores(sharedChores, `${prefix}SharedChores`, child);
+        }
+
+        // Render chore cards
+        function renderChores(chores, containerId, child) {
+            const container = document.getElementById(containerId);
+            
+            if (chores.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No chores assigned</p>';
+                return;
+            }
+
+            container.innerHTML = chores.map(chore => {
+                const isCompleted = chore.completedBy && chore.completedBy.includes(child);
+                const completedTime = chore.completedAt ? chore.completedAt[chore.completedBy.indexOf(child)] : null;
+                
+                return `
+                    <div class="chore-card ${isCompleted ? 'completed' : ''}">
+                        <div class="chore-name">${chore.name}</div>
+                        <div class="chore-info">${chore.description || ''}</div>
+                        ${isCompleted 
+                            ? `<button class="complete-button done" disabled>✓ Completed ${completedTime ? 'at ' + completedTime : ''}</button>`
+                            : `<button class="complete-button" onclick="completeChore(${chore.id}, '${chore.name}', '${child}')">Tap to Complete</button>`
+                        }
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Complete a chore
+        async function completeChore(choreId, choreName, child) {
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'Logging...';
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'complete',
+                        child: child,
+                        choreId: choreId,
+                        choreName: choreName
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to log chore');
+
+                showSuccess('Chore logged! Great work! 🎉');
+                setTimeout(() => loadDashboard(child), 1000);
+            } catch (error) {
+                console.error('Error completing chore:', error);
+                button.textContent = 'Error - try again';
+                button.disabled = false;
+                showError('Could not log chore. Please try again.');
+            }
+        }
+
+        // Load parent dashboard
+        async function loadParentDashboard() {
+            const data = await loadData();
+            if (!data) return;
+
+            // Update week totals and progress bars
+            const ellaCount = data.weekCounts.Ella || 0;
+            const hamishCount = data.weekCounts.Hamish || 0;
+            const total = ellaCount + hamishCount || 1;
+
+            document.getElementById('ellaWeekTotal').textContent = ellaCount;
+            document.getElementById('hamishWeekTotal').textContent = hamishCount;
+            
+            const ellaPercent = (ellaCount / total) * 100;
+            const hamishPercent = (hamishCount / total) * 100;
+            
+            document.getElementById('ellaProgressBar').style.width = `${ellaPercent}%`;
+            document.getElementById('ellaProgressBar').textContent = ellaCount;
+            document.getElementById('hamishProgressBar').style.width = `${hamishPercent}%`;
+            document.getElementById('hamishProgressBar').textContent = hamishCount;
+
+            // Render today's log
+            renderTodayLog(data.todayLog, data.todayChores);
+        }
+
+        // Render today's activity log
+        function renderTodayLog(log, chores) {
+            const container = document.getElementById('todayLog');
+            
+            if (log.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No chores completed yet today</p>';
+                return;
+            }
+
+            container.innerHTML = log.map(item => `
+                <div class="log-item">
+                    <span class="check">✓</span>
+                    <div class="log-content">
+                        <div class="log-chore">${item.choreName}</div>
+                        <div class="log-child">${item.child} at ${item.time}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add warnings for incomplete chores
+            const incompleteMandatory = chores.filter(c => 
+                c.assignedTo !== 'either' && 
+                (!c.completedBy || c.completedBy.length === 0)
+            );
+
+            if (incompleteMandatory.length > 0) {
+                container.innerHTML += incompleteMandatory.map(chore => `
+                    <div class="log-item">
+                        <span class="warning">⚠</span>
+                        <div class="log-content">
+                            <div class="log-chore">${chore.name}</div>
+                            <div class="log-child">Not completed yet (${chore.assignedTo})</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const div = document.createElement('div');
+            div.className = 'success-message';
+            div.textContent = message;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const existing = document.querySelector('.error');
+            if (existing) existing.remove();
+
+            const div = document.createElement('div');
+            div.className = 'error';
+            div.textContent = message;
+            document.querySelector('.container').insertBefore(div, document.querySelector('.container').firstChild);
+        }
+
+        // Check if script URL is configured
+        if (SCRIPT_URL === 'YOUR_SCRIPT_URL_HERE') {
+            showError('⚠️ App not configured yet. Please add your Google Apps Script URL.');
+        }
+    </script>
+</body>
+</html>
